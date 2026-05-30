@@ -1,55 +1,45 @@
-# Grand Pattern Adversarial Testing
+# grand-pattern-adversarial
 
-> Can a single malicious room disrupt fleet convergence?
+> Adversarial testing — can a malicious room disrupt fleet convergence?
 
-Adversarial testing suite for the Grand Pattern vibe consensus system. Pure Rust, zero dependencies.
+Pure Rust, zero dependencies. Simulates a fleet of rooms exchanging a mono-dimensional "vibe" (f64 in [0,1]) with JEPA (weighted history) prediction.
 
-## Attacks Tested (8)
+## Attacks (8)
 
-| Attack | Strategy |
-|--------|----------|
-| **Constant Max** | Always reports vibe at maximum (1.0) |
-| **Constant Min** | Always reports vibe at minimum (0.0) |
-| **Oscillator** | Alternates between max and min every tick |
-| **Random Noise** | Reports deterministic PRNG-based random vibes |
-| **Amplifier** | Reports 2× fleet vibe (positive feedback) |
-| **Mimic** | Copies most influential neighbor |
-| **Contrarian** | Always reports inverse of fleet vibe |
-| **Collusion** | Two rooms oscillate in sync |
+| # | Attack | Strategy |
+|---|--------|----------|
+| 1 | Constant Max | Always emits 1.0 |
+| 2 | Constant Min | Always emits 0.0 |
+| 3 | Oscillator | Alternates between 0 and 1 |
+| 4 | Random Noise | Deterministic pseudo-random output |
+| 5 | Amplifier | Outputs 2× fleet vibe |
+| 6 | Mimic | Copies best honest neighbor |
+| 7 | Contrarian | Pushes hard opposite to fleet mean |
+| 8 | Collusion | 2 coordinated rooms oscillating in phase |
 
-## Metrics (10 rooms, 1000 ticks, 10% attackers)
+## Metrics
 
-1. **Convergence delay** — extra ticks to converge vs baseline
-2. **Fleet vibe distortion** — distance from baseline fleet vibe
-3. **Surprise pollution** — attacker's effect on fleet surprise
-4. **Detection speed** — ticks until JEPA flags the attacker
-5. **Recovery speed** — ticks to recover after attacker removal
+10 rooms, 1000 ticks, 1-2 attackers per simulation:
 
-## Key Findings
+- **Convergence delay** — how many ticks until fleet reaches 0.5 ± 0.05
+- **Fleet vibe distortion** — max deviation from target (0.5)
+- **Surprise pollution** — JEPA prediction error from attackers
+- **Detection speed** — how fast sustained surprise is identified
+- **Recovery speed** — convergence after attacker removal
 
-Run the suite to see results:
+## Tests (15)
+
+```
+test_constant_max, test_constant_min, test_oscillator,
+test_random_noise, test_amplifier, test_mimic, test_contrarian,
+test_collusion, test_contrarian_max_disruption,
+test_jepa_detects_constant_attackers, test_recovery_after_removal,
+test_collusion_greater_than_2x, test_detection_speed,
+test_deterministic, test_baseline_converges
+```
+
+## Run
 
 ```bash
-cargo run
 cargo test
 ```
-
-## Design
-
-- **Fleet vibe**: weighted average of all room reports
-- **Convergence**: honest rooms within 0.02 of each other
-- **JEPA detection**: rooms > 2σ from fleet mean are flagged
-- **Influence decay**: flagged rooms lose weight each tick (×0.95)
-- **Deterministic**: all runs are reproducible (xorshift64 PRNG)
-
-## Tests (18)
-
-```bash
-cargo test -- --nocapture
-```
-
-All tests are deterministic — run twice, get identical results.
-
-## License
-
-MIT

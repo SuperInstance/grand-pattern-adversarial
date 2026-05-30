@@ -2,6 +2,6 @@
 name = "grand-pattern-adversarial"
 version = "0.1.0"
 edition = "2021"
-description = "Adversarial testing — can a single malicious room disrupt fleet convergence?"
+description = "Adversarial testing — can a malicious room disrupt fleet convergence?"
 
 [dependencies]
