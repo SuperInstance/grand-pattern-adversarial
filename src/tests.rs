@@ -6,10 +6,14 @@ use crate::*;
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
 
+#[allow(dead_code)]
 fn default_attackers() -> Vec<usize> { vec![0] }
+#[allow(dead_code)]
 fn two_attackers() -> Vec<usize> { vec![0, 1] }
+#[allow(dead_code)]
 fn three_attackers() -> Vec<usize> { vec![0, 1, 2] }
 
+#[allow(dead_code)]
 fn run_sim(attack: AttackType, attacker_ids: &[usize]) -> Simulation {
     let profiles: Vec<(usize, AttackType)> = attacker_ids.iter().map(|id| (*id, attack)).collect();
     let mut sim = Simulation::new(DEFAULT_TICKS, &profiles);
@@ -211,9 +215,9 @@ fn test_deterministic_runs() {
 #[test]
 fn test_convergence_delay_with_attacker() {
     let baseline = Benchmarks::compute();
-    let baseline_ticks = baseline.baseline_convergence_tick.unwrap_or(DEFAULT_TICKS);
+    let _baseline_ticks = baseline.baseline_convergence_tick.unwrap_or(DEFAULT_TICKS);
     let result = baseline.run_attack(AttackType::Contrarian, &default_attackers(), DEFAULT_TICKS);
-    let attacked_ticks = result.convergence_tick.unwrap_or(DEFAULT_TICKS);
+    let _attacked_ticks = result.convergence_tick.unwrap_or(DEFAULT_TICKS);
     // Attacker should cause some delay (or prevent convergence)
     // At minimum, it shouldn't converge faster
     // Note: this might not always hold due to attacker influence, so we just check it converges
